@@ -1,0 +1,51 @@
+image:
+  registry: registry.gitlab.com
+  image: gitlab-org/gitlab-runner
+
+imagePullPoicy: IfNotPresent
+revisionHistoryLimit: 10
+gitlabUrl: https://gitlab.com
+runnerToken: "glrt-NwGuXzw2xN6CAsZVxvTV"
+terminationGracePeriodSeconds: 3600
+concurrent: 10
+checkInterval: 30
+sessionServer:
+  enabled: true
+rbac:
+  create: true
+rules: 
+  - resources: ["configmaps", "pods", "pods/attach", "pods/exec", "secrets", "services"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/attach"]
+    verbs: ["create", "patch", "delete"]
+clusterWideAccess: false
+podSecurityPolicy:
+  enabled: false
+  resourceNames:
+  - my-gitlab-runner
+metrics:
+  enabled: false
+serviceMonitor:
+  enabled: false
+service:
+  enabled: true
+
+runners:
+  config: |
+    [[runners]]
+      name = "my-gitlab-runner"
+      url = "https://gitlab.com"
+      executor = "kubernetes"
+      [runners.kubernetes]
+        image = "alpine:latest"
+resourses:
+  limits:
+    memory: 512Mi
+    cpu: 500m
+    requests:
+    memory: 256Mi
+    cpu: 200m
+
+
+
